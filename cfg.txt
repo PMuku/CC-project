@@ -1,0 +1,48 @@
+// Dart CFG
+
+<Program> -> void main() <Block>
+
+<Block> -> { <StatementList> }
+
+<StatementList> -> <Statement> <StatementList> | eps
+
+<Statement> -> <Declaration> | <Assignment> | <Conditional> | <Loop> | <Block>
+
+
+<Declaration> -> <Type> id ; | <Type> id = <Expression> ; | var id = <Expression> ;
+
+<Type> -> int | double | bool | String
+
+<Assignment> -> id = <Expression> ;
+
+
+<Conditional> -> if ( <Expression> ) <Block>
+               | if ( <Expression> ) <Block> else <Conditional>
+               | if ( <Expression> ) <Block> else <Block>
+
+<Loop> -> while ( <Expression> ) <Block>
+
+
+<Expression> -> <Or>
+
+<Or> -> <Or> || <And> | <And>
+
+<And> -> <And> && <Equality> | <Equality>
+
+<Equality> -> <Equality> <EquOp> <Relational> | <Relational>
+
+<Relational> -> <Relational> <RelOp> <Additive> | <Additive>
+
+<Additive> -> <Additive> <AddOp> <Multiplicative> | <Multiplicative>
+
+<Multiplicative> -> <Multiplicative> <MulOp> <Unary> | <Unary>
+
+<Unary> -> ! <Unary> | - <Unary> | <Primary>
+
+<Primary> -> id | num | string_literal | true | false | ( <Expression> )
+
+
+<RelOp> -> < | > | <= | >=
+<EquOp> -> == | !=
+<AddOp> -> + | -
+<MulOp> -> * | /
