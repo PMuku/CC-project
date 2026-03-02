@@ -1,4 +1,10 @@
 void main() {
+    // Single line comment
+    /*
+    Multi 
+    line
+    comment
+    */
     int x = 5;
     double y = 3.14;
     bool flag = true;

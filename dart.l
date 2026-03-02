@@ -8,13 +8,13 @@ ID        [a-zA-Z_][a-zA-Z0-9_]*
 STRING    (\"([^\"\\]|\\.)*\"|\'([^\'\\]|\\.)*\')
 
 SINGLE_COMMENT "//"[^\n]*
-MULTI_COMMENT /\*([^*]|\*+[^*/])*\*+/
+MULTI_COMMENT \/\*([^*]|\*+[^*/])*\*+\/
 WHITESPACE [ \t\n\r]+
 
 %%
 
-{SINGLE_COMMENT}        ;
-{MULTI_COMMENT}         ;
+{SINGLE_COMMENT}        { fprintf(yyout, "Single line comment\n"); }
+{MULTI_COMMENT}         { fprintf(yyout, "Multi line comment\n"); }
 {WHITESPACE}            ;
 
 {KEYWORD}   { fprintf(yyout, "KEYWORD(%s)\n", yytext); }
