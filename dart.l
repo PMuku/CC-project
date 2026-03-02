@@ -1,6 +1,24 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int line = 1;
+
+// print tokens to file
+void print_token(const char* type, const char* lexeme) {
+    fprintf(yyout, "Line %-3d | %-35s | %s\n", line, type, lexeme);
+}
+
+// print error to stdout
+void lexical_error(const char* message) {
+    printf("Lexical Error (line %d): %s\n", line, message);
+}
+
 %}
+
+%x STRINGMODE
+%x COMMENTMODE
 
 KEYWORD   (void|main|if|else|while|var|int|double|bool|String|true|false)
 NUM       [0-9]+(\.[0-9]+)?
@@ -14,39 +32,70 @@ WHITESPACE [ \t\n\r]+
 %%
 
 {SINGLE_COMMENT}        ;
-{MULTI_COMMENT}         ;
+
+"/*"  { BEGIN(COMMENTMODE); }
+<COMMENTMODE>"*/"   { BEGIN(INITIAL); }
+<COMMENTMODE>\n     { line++; }
+<COMMENTMODE><<EOF>> {
+                        lexical_error("Unclosed multi-line comment");
+                        exit(1);
+                    }
+<COMMENTMODE>.      ;
+
+\"                  { BEGIN(STRINGMODE); yymore(); }
+<STRINGMODE>\"      {
+                        yymore();
+                        print_token("STRING_LITERAL", yytext);
+                        BEGIN(INITIAL);
+                    }
+                    
+<STRINGMODE>\\[nrt\"\\]   { yymore(); }
+
+<STRINGMODE>\n      {
+                        lexical_error("Unclosed string literal");
+                        line++;
+                        BEGIN(INITIAL);
+                    }
+
+<STRINGMODE><<EOF>> {
+                        lexical_error("Unclosed string literal at EOF");
+                        exit(1);
+                    }
+
+<STRINGMODE>.     { yymore(); }
+
 {WHITESPACE}            ;
 
-{KEYWORD}   { fprintf(yyout, "KEYWORD(%s)\n", yytext); }
+{KEYWORD}   { print_token("KEYWORD", yytext); }
 
 
-"=="        { fprintf(yyout, "EQ\n"); }
-"!="        { fprintf(yyout, "NE\n"); }
-"<="        { fprintf(yyout, "LE\n"); }
-">="        { fprintf(yyout, "GE\n"); }
-"&&"        { fprintf(yyout, "AND\n"); }
-"||"        { fprintf(yyout, "OR\n"); }
+"=="        { print_token("EQ", yytext); }
+"!="        { print_token("NE", yytext); }
+"<="        { print_token("LE", yytext); }
+">="        { print_token("GE", yytext); }
+"&&"        { print_token("AND", yytext); }
+"||"        { print_token("OR", yytext); }
 
-"+"         { fprintf(yyout, "PLUS\n"); }
-"-"         { fprintf(yyout, "MINUS\n"); }
-"*"         { fprintf(yyout, "MUL\n"); }
-"/"         { fprintf(yyout, "DIV\n"); }
-"<"         { fprintf(yyout, "LT\n"); }
-">"         { fprintf(yyout, "GT\n"); }
-"!"         { fprintf(yyout, "NOT\n"); }
-"="         { fprintf(yyout, "ASSIGN\n"); }
+"+"         { print_token("PLUS", yytext); }
+"-"         { print_token("MINUS", yytext); }
+"*"         { print_token("MUL", yytext); }
+"/"         { print_token("DIV", yytext); }
+"<"         { print_token("LT", yytext); }
+">"         { print_token("GT", yytext); }
+"!"         { print_token("NOT", yytext); }
+"="         { print_token("ASSIGN", yytext); }
 
-";"         { fprintf(yyout, "SEMI\n"); }
-"("         { fprintf(yyout, "LPAREN\n"); }
-")"         { fprintf(yyout, "RPAREN\n"); }
-"{"         { fprintf(yyout, "LBRACE\n"); }
-"}"         { fprintf(yyout, "RBRACE\n"); }
+";"         { print_token("SEMI", yytext); }
+"("         { print_token("LPAREN", yytext); }
+")"         { print_token("RPAREN", yytext); }
+"{"         { print_token("LBRACE", yytext); }
+"}"         { print_token("RBRACE", yytext); }
 
-{NUM}       { fprintf(yyout, "NUM(%s)\n", yytext); }
-{STRING}    { fprintf(yyout, "STRING_LITERAL(%s)\n", yytext); }
-{ID}        { fprintf(yyout, "ID(%s)\n", yytext); }
+{NUM}       { print_token("NUM", yytext); }
+{STRING}    { print_token("STRING_LITERAL", yytext); }
+{ID}        { print_token("ID", yytext); }
 
-.           { fprintf(yyout, "UNKNOWN(%s)\n", yytext); }
+.           { print_token("UNKNOWN", yytext); }
 
 
 %%
