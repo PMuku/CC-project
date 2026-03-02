@@ -4,6 +4,7 @@
 #include <string.h>
 
 int line = 1;
+int errors = 0;
 
 // print tokens to file
 void print_token(const char* type, const char* lexeme) {
@@ -13,6 +14,7 @@ void print_token(const char* type, const char* lexeme) {
 // print error to stdout
 void lexical_error(const char* message) {
     printf("Lexical Error (line %d): %s\n", line, message);
+    errors++;
 }
 
 %}
@@ -64,7 +66,7 @@ WHITESPACE [ \t\n\r]+
 
 <STRINGMODE>.     { yymore(); }
 
-{WHITESPACE}            ;
+{WHITESPACE}      { if (strchr(yytext, '\n')) line++; }
 
 {KEYWORD}   { print_token("KEYWORD", yytext); }
 
@@ -90,6 +92,8 @@ WHITESPACE [ \t\n\r]+
 ")"         { print_token("RPAREN", yytext); }
 "{"         { print_token("LBRACE", yytext); }
 "}"         { print_token("RBRACE", yytext); }
+
+[0-9]+(\.[0-9]+){2,}  { lexical_error("Malformed number"); }
 
 {NUM}       { print_token("NUM", yytext); }
 {STRING}    { print_token("STRING_LITERAL", yytext); }
@@ -130,7 +134,15 @@ int main(int argc, char **argv) {
         }
 
         printf("Processing file: %s\n", in_file);
+        errors = 0; // reset error count for each file
+        line = 1;  // reset line count for each file
         yylex();
+
+        if (errors == 0) {
+            printf("No lexical errors.\n");
+        } else {
+            printf("Lexical errors found: %d\n", errors);
+        }
 
         fclose(in);
         fclose(yyout);
