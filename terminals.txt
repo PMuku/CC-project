@@ -8,4 +8,4 @@ DELIMITERS:
   (, ), {, }, ;
 
 LITERALS:
-  id, num, string_literal:
+  id, num, string_literal
