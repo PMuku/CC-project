@@ -51,12 +51,41 @@ WHITESPACE [ \t\n\r]+
 
 %%
 
-int main() {
+int main(int argc, char **argv) {
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <input_file(s)>\n", argv[0]);
+        return 1;
+    }
+
     printf("Dart lexer...\n");
-    yyin = fopen("test_correct.dart", "r");
-    // yyin = fopen("test_error.dart", "r");
-    yyout = fopen("output_correct.txt", "w");
-    // yyout = fopen("output_error.txt", "w");
-    yylex();
+
+    for (int i = 1; i < argc; i++) {
+        const char *in_file = argv[i];
+        FILE *in = fopen(in_file, "r");
+        if (!in) {
+            fprintf(stderr, "Could not open file: %s\n", in_file);
+            continue;
+        }
+        yyin = in;
+        yyrestart(yyin);
+
+        char out_file[256];
+        snprintf(out_file, sizeof(out_file), "output_tokens_%d.txt", i);
+
+        yyout = fopen(out_file, "w");
+        if (!yyout) {
+            fprintf(stderr, "Could not create output file: %s\n", out_file);
+            fclose(in);
+            continue;
+        }
+
+        printf("Processing file: %s\n", in_file);
+        yylex();
+
+        fclose(in);
+        fclose(yyout);
+    }
+
     return 0;
 }
