@@ -1,54 +1,62 @@
+%{
+#include <stdio.h>
+%}
+
+KEYWORD   (void|main|if|else|while|var|int|double|bool|String|true|false)
+NUM       [0-9]+(\.[0-9]+)?
+ID        [a-zA-Z_][a-zA-Z0-9_]*
+STRING    (\"([^\"\\]|\\.)*\"|\'([^\'\\]|\\.)*\')
+
+SINGLE_COMMENT "//"[^\n]*
+MULTI_COMMENT /\*([^*]|\*+[^*/])*\*+/
+WHITESPACE [ \t\n\r]+
+
 %%
 
-"void"      { printf("VOID\n"); }
-"main"      { printf("MAIN\n"); }
-"if"        { printf("IF\n"); }
-"else"      { printf("ELSE\n"); }
-"while"     { printf("WHILE\n"); }
-"var"       { printf("VAR\n"); }
+{SINGLE_COMMENT}        ;
+{MULTI_COMMENT}         ;
+{WHITESPACE}            ;
 
-"int"       { printf("INT\n"); }
-"double"    { printf("DOUBLE\n"); }
-"bool"      { printf("BOOL\n"); }
-"String"    { printf("STRING_T\n"); }
+{KEYWORD}   { fprintf(yyout, "KEYWORD(%s)\n", yytext); }
 
-"true"      { printf("TRUE\n"); }
-"false"     { printf("FALSE\n"); }
 
-"=="        { printf("EQ\n"); }
-"!="        { printf("NE\n"); }
-"<="        { printf("LE\n"); }
-">="        { printf("GE\n"); }
-"&&"        { printf("AND\n"); }
-"||"        { printf("OR\n"); }
+"=="        { fprintf(yyout, "EQ\n"); }
+"!="        { fprintf(yyout, "NE\n"); }
+"<="        { fprintf(yyout, "LE\n"); }
+">="        { fprintf(yyout, "GE\n"); }
+"&&"        { fprintf(yyout, "AND\n"); }
+"||"        { fprintf(yyout, "OR\n"); }
 
-"+"         { printf("PLUS\n"); }
-"-"         { printf("MINUS\n"); }
-"*"         { printf("MUL\n"); }
-"/"         { printf("DIV\n"); }
-"<"         { printf("LT\n"); }
-">"         { printf("GT\n"); }
-"!"         { printf("NOT\n"); }
-"="         { printf("ASSIGN\n"); }
+"+"         { fprintf(yyout, "PLUS\n"); }
+"-"         { fprintf(yyout, "MINUS\n"); }
+"*"         { fprintf(yyout, "MUL\n"); }
+"/"         { fprintf(yyout, "DIV\n"); }
+"<"         { fprintf(yyout, "LT\n"); }
+">"         { fprintf(yyout, "GT\n"); }
+"!"         { fprintf(yyout, "NOT\n"); }
+"="         { fprintf(yyout, "ASSIGN\n"); }
 
-";"         { printf("SEMI\n"); }
-"("         { printf("LPAREN\n"); }
-")"         { printf("RPAREN\n"); }
-"{"         { printf("LBRACE\n"); }
-"}"         { printf("RBRACE\n"); }
+";"         { fprintf(yyout, "SEMI\n"); }
+"("         { fprintf(yyout, "LPAREN\n"); }
+")"         { fprintf(yyout, "RPAREN\n"); }
+"{"         { fprintf(yyout, "LBRACE\n"); }
+"}"         { fprintf(yyout, "RBRACE\n"); }
 
-[0-9]+(\.[0-9]+)?       { printf("NUM(%s)\n", yytext); }
-\"([^\"\\]|\\.)*\"|\'([^\'\\]|\\.)*\'     { printf("STRING_LITERAL(%s)\n", yytext); }
-[a-zA-Z_][a-zA-Z0-9_]*  { printf("ID(%s)\n", yytext); }
+{NUM}       { fprintf(yyout, "NUM(%s)\n", yytext); }
+{STRING}    { fprintf(yyout, "STRING_LITERAL(%s)\n", yytext); }
+{ID}        { fprintf(yyout, "ID(%s)\n", yytext); }
 
-[ \t\n\r]+              ;
-.                       { printf("UNKNOWN(%s)\n", yytext); }
+.                       { fprintf(yyout, "UNKNOWN(%s)\n", yytext); }
 
 
 %%
 
 int main() {
     printf("Dart lexer...\n");
+    // yyin = fopen("test_correct.dart", "r");
+    // yyin = fopen("test_error.dart", "r");
+    // yyout = fopen("output_correct.txt", "w");
+    // yyout = fopen("output_error.txt", "w");
     yylex();
     return 0;
 }
