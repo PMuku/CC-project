@@ -13,8 +13,8 @@ WHITESPACE [ \t\n\r]+
 
 %%
 
-{SINGLE_COMMENT}        { fprintf(yyout, "Single line comment\n"); }
-{MULTI_COMMENT}         { fprintf(yyout, "Multi line comment\n"); }
+{SINGLE_COMMENT}        ;
+{MULTI_COMMENT}         ;
 {WHITESPACE}            ;
 
 {KEYWORD}   { fprintf(yyout, "KEYWORD(%s)\n", yytext); }
@@ -46,16 +46,16 @@ WHITESPACE [ \t\n\r]+
 {STRING}    { fprintf(yyout, "STRING_LITERAL(%s)\n", yytext); }
 {ID}        { fprintf(yyout, "ID(%s)\n", yytext); }
 
-.                       { fprintf(yyout, "UNKNOWN(%s)\n", yytext); }
+.           { fprintf(yyout, "UNKNOWN(%s)\n", yytext); }
 
 
 %%
 
 int main() {
     printf("Dart lexer...\n");
-    // yyin = fopen("test_correct.dart", "r");
+    yyin = fopen("test_correct.dart", "r");
     // yyin = fopen("test_error.dart", "r");
-    // yyout = fopen("output_correct.txt", "w");
+    yyout = fopen("output_correct.txt", "w");
     // yyout = fopen("output_error.txt", "w");
     yylex();
     return 0;
