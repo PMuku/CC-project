@@ -1,0 +1,11 @@
+KEYWORDS:
+  void, main, if, else, while, var, int, double, bool, String, true, false
+
+OPERATORS:
+  =, +, -, *, /, !, &&, ||, ==, !=, <, >, <=, >=
+
+DELIMITERS:
+  (, ), {, }, ;
+
+LITERALS:
+  id, num, string_literal:
