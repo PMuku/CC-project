@@ -29,15 +29,8 @@ DOUBLE      {DIGIT}+"."{DIGIT}+
 WHITESPACE  [ \t\r]+
 
 %%
-
-/* ============================= */
-/*          COMMENTS             */
-/* ============================= */
-
-/* Single-line comment */
 "//".*              { /* ignore */ }
 
-/* Multi-line comment start */
 "/*"                { BEGIN(COMMENTMODE); }
 
 <COMMENTMODE>"*/"   { BEGIN(INITIAL); }
@@ -51,9 +44,6 @@ WHITESPACE  [ \t\r]+
 
 <COMMENTMODE>.      { /* ignore comment content */ }
 
-/* ============================= */
-/*           STRINGS             */
-/* ============================= */
 
 \"                  { BEGIN(STRINGMODE); yymore(); }
 
@@ -63,17 +53,14 @@ WHITESPACE  [ \t\r]+
                         BEGIN(INITIAL);
                     }
 
-/* Handle escape sequences */
 <STRINGMODE>\\[nrt\"\\]   { yymore(); }
 
-/* Newline before closing quote = error */
 <STRINGMODE>\n      {
                         lexical_error("Unclosed string literal");
                         line++;
                         BEGIN(INITIAL);
                     }
 
-/* EOF before closing quote */
 <STRINGMODE><<EOF>> {
                         lexical_error("Unclosed string at EOF");
                         exit(1);
@@ -81,9 +68,6 @@ WHITESPACE  [ \t\r]+
 
 <STRINGMODE>.       { yymore(); }
 
-/* ============================= */
-/*           KEYWORDS            */
-/* ============================= */
 
 "void"      { print_token("VOID", yytext); }
 "main"      { print_token("MAIN", yytext); }
@@ -100,9 +84,6 @@ WHITESPACE  [ \t\r]+
 "true"      { print_token("TRUE", yytext); }
 "false"     { print_token("FALSE", yytext); }
 
-/* ============================= */
-/*           OPERATORS           */
-/* ============================= */
 
 "||"        { print_token("OR", yytext); }
 "&&"        { print_token("AND", yytext); }
@@ -123,9 +104,6 @@ WHITESPACE  [ \t\r]+
 "="         { print_token("ASSIGN", yytext); }
 "!"         { print_token("NOT", yytext); }
 
-/* ============================= */
-/*          DELIMITERS           */
-/* ============================= */
 
 ";"         { print_token("SEMICOLON", yytext); }
 ","         { print_token("COMMA", yytext); }
@@ -135,30 +113,18 @@ WHITESPACE  [ \t\r]+
 "{"         { print_token("LBRACE", yytext); }
 "}"         { print_token("RBRACE", yytext); }
 
-/* ============================= */
-/*            NUMBERS            */
-/* ============================= */
 
 {DOUBLE}    { print_token("NUM_DOUBLE", yytext); }
 {INT}       { print_token("NUM_INT", yytext); }
 
-/* ============================= */
-/*         IDENTIFIERS           */
-/* ============================= */
 
 {ID}        { print_token("ID", yytext); }
 
-/* ============================= */
-/*        WHITESPACE + LINES     */
-/* ============================= */
 
 {WHITESPACE}    { /* ignore */ }
 
 \n              { line++; }
 
-/* ============================= */
-/*            ERRORS             */
-/* ============================= */
 
 .           {
                 char msg[100];
