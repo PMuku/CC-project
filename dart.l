@@ -96,7 +96,6 @@ WHITESPACE [ \t\n\r]+
 [0-9]+(\.[0-9]+){2,}  { lexical_error("Malformed number"); }
 
 {NUM}       { print_token("NUM", yytext); }
-{STRING}    { print_token("STRING_LITERAL", yytext); }
 {ID}        { print_token("ID", yytext); }
 
 .           { print_token("UNKNOWN", yytext); }
