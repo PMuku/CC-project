@@ -8,7 +8,7 @@ void main() {
     int x = 5;
     double y = 3.14;
     bool flag = true;
-    String s = "hello";
+    String s = "hello" ;
 
     x = x + 2 * (3 + 1);
     y = (y + x) / 2.0;

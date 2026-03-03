@@ -25,7 +25,7 @@ void lexical_error(const char* message) {
 KEYWORD   (void|main|if|else|while|var|int|double|bool|String|true|false)
 NUM       [0-9]+(\.[0-9]+)?
 ID        [a-zA-Z_][a-zA-Z0-9_]*
-STRING    (\"([^\"\\]|\\.)*\"|\'([^\'\\]|\\.)*\')
+STRING    \"([^\"\\]|\\.)*\"
 
 SINGLE_COMMENT "//"[^\n]*
 MULTI_COMMENT \/\*([^*]|\*+[^*/])*\*+\/
@@ -98,7 +98,11 @@ WHITESPACE [ \t\n\r]+
 {NUM}       { print_token("NUM", yytext); }
 {ID}        { print_token("ID", yytext); }
 
-.           { print_token("UNKNOWN", yytext); }
+. {
+    char msg[50];
+    snprintf(msg, sizeof(msg), "Invalid character '%s'", yytext);
+    lexical_error(msg);
+}
 
 
 %%
