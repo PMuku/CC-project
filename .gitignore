@@ -1,3 +1,5 @@
 a.out
 lex.yy.c
-output*
+*output*
+dart_parser.tab.c
+dart_parser.tab.h
