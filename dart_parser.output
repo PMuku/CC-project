@@ -1,0 +1,1321 @@
+Terminals which are not used
+
+   COMMA
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: VOID MAIN LPAREN RPAREN block
+
+    2 block: LBRACE stmt_list RBRACE
+
+    3 stmt_list: stmt stmt_list
+    4          | /* empty */
+
+    5 stmt: declaration
+    6     | assignment
+    7     | conditional
+    8     | loop
+    9     | block
+
+   10 declaration: type ID SEMICOLON
+   11            | type ID ASSIGN expr SEMICOLON
+   12            | VAR ID ASSIGN expr SEMICOLON
+
+   13 type: INT_TYPE
+   14     | DOUBLE_TYPE
+   15     | BOOL_TYPE
+   16     | STRING_TYPE
+
+   17 assignment: ID ASSIGN expr SEMICOLON
+
+   18 if_start: IF LPAREN expr RPAREN
+
+   19 conditional: if_start block
+
+   20 @1: /* empty */
+
+   21 conditional: if_start block @1 ELSE else_part
+
+   22 else_part: block
+   23          | conditional
+
+   24 @2: /* empty */
+
+   25 @3: /* empty */
+
+   26 loop: WHILE @2 LPAREN expr RPAREN @3 block
+
+   27 expr: or_expr
+
+   28 or_expr: or_expr OR and_expr
+   29        | and_expr
+
+   30 and_expr: and_expr AND equality_expr
+   31         | equality_expr
+
+   32 equality_expr: equality_expr EQ relational_expr
+   33              | equality_expr NEQ relational_expr
+   34              | relational_expr
+
+   35 relational_expr: relational_expr LT additive_expr
+   36                | relational_expr GT additive_expr
+   37                | relational_expr LE additive_expr
+   38                | relational_expr GE additive_expr
+   39                | additive_expr
+
+   40 additive_expr: additive_expr PLUS multiplicative_expr
+   41              | additive_expr MINUS multiplicative_expr
+   42              | multiplicative_expr
+
+   43 multiplicative_expr: multiplicative_expr MUL unary_expr
+   44                    | multiplicative_expr DIV unary_expr
+   45                    | unary_expr
+
+   46 unary_expr: NOT unary_expr
+   47           | MINUS unary_expr
+   48           | primary_expr
+
+   49 primary_expr: ID
+   50             | NUM_INT
+   51             | NUM_DOUBLE
+   52             | STRING_LITERAL
+   53             | TRUE_LIT
+   54             | FALSE_LIT
+   55             | LPAREN expr RPAREN
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+ID (258) 10 11 12 17 49
+NUM_INT (259) 50
+NUM_DOUBLE (260) 51
+STRING_LITERAL (261) 52
+TRUE_LIT (262) 53
+FALSE_LIT (263) 54
+VOID (264) 1
+MAIN (265) 1
+INT_TYPE (266) 13
+DOUBLE_TYPE (267) 14
+BOOL_TYPE (268) 15
+STRING_TYPE (269) 16
+VAR (270) 12
+IF (271) 18
+ELSE (272) 21
+WHILE (273) 26
+OR (274) 28
+AND (275) 30
+EQ (276) 32
+NEQ (277) 33
+LE (278) 37
+GE (279) 38
+LT (280) 35
+GT (281) 36
+PLUS (282) 40
+MINUS (283) 41 47
+MUL (284) 43
+DIV (285) 44
+ASSIGN (286) 11 12 17
+NOT (287) 46
+SEMICOLON (288) 10 11 12 17
+COMMA (289)
+LPAREN (290) 1 18 26 55
+RPAREN (291) 1 18 26 55
+LBRACE (292) 2
+RBRACE (293) 2
+LOWER_THAN_ELSE (294)
+
+
+Nonterminals, with rules where they appear
+
+$accept (40)
+    on left: 0
+program (41)
+    on left: 1, on right: 0
+block (42)
+    on left: 2, on right: 1 9 19 21 22 26
+stmt_list (43)
+    on left: 3 4, on right: 2 3
+stmt (44)
+    on left: 5 6 7 8 9, on right: 3
+declaration (45)
+    on left: 10 11 12, on right: 5
+type (46)
+    on left: 13 14 15 16, on right: 10 11
+assignment (47)
+    on left: 17, on right: 6
+if_start (48)
+    on left: 18, on right: 19 21
+conditional (49)
+    on left: 19 21, on right: 7 23
+@1 (50)
+    on left: 20, on right: 21
+else_part (51)
+    on left: 22 23, on right: 21
+loop (52)
+    on left: 26, on right: 8
+@2 (53)
+    on left: 24, on right: 26
+@3 (54)
+    on left: 25, on right: 26
+expr (55)
+    on left: 27, on right: 11 12 17 18 26 55
+or_expr (56)
+    on left: 28 29, on right: 27 28
+and_expr (57)
+    on left: 30 31, on right: 28 29 30
+equality_expr (58)
+    on left: 32 33 34, on right: 30 31 32 33
+relational_expr (59)
+    on left: 35 36 37 38 39, on right: 32 33 34 35 36 37 38
+additive_expr (60)
+    on left: 40 41 42, on right: 35 36 37 38 39 40 41
+multiplicative_expr (61)
+    on left: 43 44 45, on right: 40 41 42 43 44
+unary_expr (62)
+    on left: 46 47 48, on right: 43 44 45 46 47
+primary_expr (63)
+    on left: 49 50 51 52 53 54 55, on right: 48
+
+
+state 0
+
+    0 $accept: . program $end
+
+    VOID  shift, and go to state 1
+
+    program  go to state 2
+
+
+state 1
+
+    1 program: VOID . MAIN LPAREN RPAREN block
+
+    MAIN  shift, and go to state 3
+
+
+state 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 4
+
+
+state 3
+
+    1 program: VOID MAIN . LPAREN RPAREN block
+
+    LPAREN  shift, and go to state 5
+
+
+state 4
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+state 5
+
+    1 program: VOID MAIN LPAREN . RPAREN block
+
+    RPAREN  shift, and go to state 6
+
+
+state 6
+
+    1 program: VOID MAIN LPAREN RPAREN . block
+
+    LBRACE  shift, and go to state 7
+
+    block  go to state 8
+
+
+state 7
+
+    2 block: LBRACE . stmt_list RBRACE
+
+    ID           shift, and go to state 9
+    INT_TYPE     shift, and go to state 10
+    DOUBLE_TYPE  shift, and go to state 11
+    BOOL_TYPE    shift, and go to state 12
+    STRING_TYPE  shift, and go to state 13
+    VAR          shift, and go to state 14
+    IF           shift, and go to state 15
+    WHILE        shift, and go to state 16
+    LBRACE       shift, and go to state 7
+
+    $default  reduce using rule 4 (stmt_list)
+
+    block        go to state 17
+    stmt_list    go to state 18
+    stmt         go to state 19
+    declaration  go to state 20
+    type         go to state 21
+    assignment   go to state 22
+    if_start     go to state 23
+    conditional  go to state 24
+    loop         go to state 25
+
+
+state 8
+
+    1 program: VOID MAIN LPAREN RPAREN block .
+
+    $default  reduce using rule 1 (program)
+
+
+state 9
+
+   17 assignment: ID . ASSIGN expr SEMICOLON
+
+    ASSIGN  shift, and go to state 26
+
+
+state 10
+
+   13 type: INT_TYPE .
+
+    $default  reduce using rule 13 (type)
+
+
+state 11
+
+   14 type: DOUBLE_TYPE .
+
+    $default  reduce using rule 14 (type)
+
+
+state 12
+
+   15 type: BOOL_TYPE .
+
+    $default  reduce using rule 15 (type)
+
+
+state 13
+
+   16 type: STRING_TYPE .
+
+    $default  reduce using rule 16 (type)
+
+
+state 14
+
+   12 declaration: VAR . ID ASSIGN expr SEMICOLON
+
+    ID  shift, and go to state 27
+
+
+state 15
+
+   18 if_start: IF . LPAREN expr RPAREN
+
+    LPAREN  shift, and go to state 28
+
+
+state 16
+
+   26 loop: WHILE . @2 LPAREN expr RPAREN @3 block
+
+    $default  reduce using rule 24 (@2)
+
+    @2  go to state 29
+
+
+state 17
+
+    9 stmt: block .
+
+    $default  reduce using rule 9 (stmt)
+
+
+state 18
+
+    2 block: LBRACE stmt_list . RBRACE
+
+    RBRACE  shift, and go to state 30
+
+
+state 19
+
+    3 stmt_list: stmt . stmt_list
+
+    ID           shift, and go to state 9
+    INT_TYPE     shift, and go to state 10
+    DOUBLE_TYPE  shift, and go to state 11
+    BOOL_TYPE    shift, and go to state 12
+    STRING_TYPE  shift, and go to state 13
+    VAR          shift, and go to state 14
+    IF           shift, and go to state 15
+    WHILE        shift, and go to state 16
+    LBRACE       shift, and go to state 7
+
+    $default  reduce using rule 4 (stmt_list)
+
+    block        go to state 17
+    stmt_list    go to state 31
+    stmt         go to state 19
+    declaration  go to state 20
+    type         go to state 21
+    assignment   go to state 22
+    if_start     go to state 23
+    conditional  go to state 24
+    loop         go to state 25
+
+
+state 20
+
+    5 stmt: declaration .
+
+    $default  reduce using rule 5 (stmt)
+
+
+state 21
+
+   10 declaration: type . ID SEMICOLON
+   11            | type . ID ASSIGN expr SEMICOLON
+
+    ID  shift, and go to state 32
+
+
+state 22
+
+    6 stmt: assignment .
+
+    $default  reduce using rule 6 (stmt)
+
+
+state 23
+
+   19 conditional: if_start . block
+   21            | if_start . block @1 ELSE else_part
+
+    LBRACE  shift, and go to state 7
+
+    block  go to state 33
+
+
+state 24
+
+    7 stmt: conditional .
+
+    $default  reduce using rule 7 (stmt)
+
+
+state 25
+
+    8 stmt: loop .
+
+    $default  reduce using rule 8 (stmt)
+
+
+state 26
+
+   17 assignment: ID ASSIGN . expr SEMICOLON
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    expr                 go to state 43
+    or_expr              go to state 44
+    and_expr             go to state 45
+    equality_expr        go to state 46
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 27
+
+   12 declaration: VAR ID . ASSIGN expr SEMICOLON
+
+    ASSIGN  shift, and go to state 52
+
+
+state 28
+
+   18 if_start: IF LPAREN . expr RPAREN
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    expr                 go to state 53
+    or_expr              go to state 44
+    and_expr             go to state 45
+    equality_expr        go to state 46
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 29
+
+   26 loop: WHILE @2 . LPAREN expr RPAREN @3 block
+
+    LPAREN  shift, and go to state 54
+
+
+state 30
+
+    2 block: LBRACE stmt_list RBRACE .
+
+    $default  reduce using rule 2 (block)
+
+
+state 31
+
+    3 stmt_list: stmt stmt_list .
+
+    $default  reduce using rule 3 (stmt_list)
+
+
+state 32
+
+   10 declaration: type ID . SEMICOLON
+   11            | type ID . ASSIGN expr SEMICOLON
+
+    ASSIGN     shift, and go to state 55
+    SEMICOLON  shift, and go to state 56
+
+
+state 33
+
+   19 conditional: if_start block .
+   21            | if_start block . @1 ELSE else_part
+
+    ELSE      reduce using rule 20 (@1)
+    $default  reduce using rule 19 (conditional)
+
+    @1  go to state 57
+
+
+state 34
+
+   49 primary_expr: ID .
+
+    $default  reduce using rule 49 (primary_expr)
+
+
+state 35
+
+   50 primary_expr: NUM_INT .
+
+    $default  reduce using rule 50 (primary_expr)
+
+
+state 36
+
+   51 primary_expr: NUM_DOUBLE .
+
+    $default  reduce using rule 51 (primary_expr)
+
+
+state 37
+
+   52 primary_expr: STRING_LITERAL .
+
+    $default  reduce using rule 52 (primary_expr)
+
+
+state 38
+
+   53 primary_expr: TRUE_LIT .
+
+    $default  reduce using rule 53 (primary_expr)
+
+
+state 39
+
+   54 primary_expr: FALSE_LIT .
+
+    $default  reduce using rule 54 (primary_expr)
+
+
+state 40
+
+   47 unary_expr: MINUS . unary_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    unary_expr    go to state 58
+    primary_expr  go to state 51
+
+
+state 41
+
+   46 unary_expr: NOT . unary_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    unary_expr    go to state 59
+    primary_expr  go to state 51
+
+
+state 42
+
+   55 primary_expr: LPAREN . expr RPAREN
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    expr                 go to state 60
+    or_expr              go to state 44
+    and_expr             go to state 45
+    equality_expr        go to state 46
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 43
+
+   17 assignment: ID ASSIGN expr . SEMICOLON
+
+    SEMICOLON  shift, and go to state 61
+
+
+state 44
+
+   27 expr: or_expr .
+   28 or_expr: or_expr . OR and_expr
+
+    OR  shift, and go to state 62
+
+    $default  reduce using rule 27 (expr)
+
+
+state 45
+
+   29 or_expr: and_expr .
+   30 and_expr: and_expr . AND equality_expr
+
+    AND  shift, and go to state 63
+
+    $default  reduce using rule 29 (or_expr)
+
+
+state 46
+
+   31 and_expr: equality_expr .
+   32 equality_expr: equality_expr . EQ relational_expr
+   33              | equality_expr . NEQ relational_expr
+
+    EQ   shift, and go to state 64
+    NEQ  shift, and go to state 65
+
+    $default  reduce using rule 31 (and_expr)
+
+
+state 47
+
+   34 equality_expr: relational_expr .
+   35 relational_expr: relational_expr . LT additive_expr
+   36                | relational_expr . GT additive_expr
+   37                | relational_expr . LE additive_expr
+   38                | relational_expr . GE additive_expr
+
+    LE  shift, and go to state 66
+    GE  shift, and go to state 67
+    LT  shift, and go to state 68
+    GT  shift, and go to state 69
+
+    $default  reduce using rule 34 (equality_expr)
+
+
+state 48
+
+   39 relational_expr: additive_expr .
+   40 additive_expr: additive_expr . PLUS multiplicative_expr
+   41              | additive_expr . MINUS multiplicative_expr
+
+    PLUS   shift, and go to state 70
+    MINUS  shift, and go to state 71
+
+    $default  reduce using rule 39 (relational_expr)
+
+
+state 49
+
+   42 additive_expr: multiplicative_expr .
+   43 multiplicative_expr: multiplicative_expr . MUL unary_expr
+   44                    | multiplicative_expr . DIV unary_expr
+
+    MUL  shift, and go to state 72
+    DIV  shift, and go to state 73
+
+    $default  reduce using rule 42 (additive_expr)
+
+
+state 50
+
+   45 multiplicative_expr: unary_expr .
+
+    $default  reduce using rule 45 (multiplicative_expr)
+
+
+state 51
+
+   48 unary_expr: primary_expr .
+
+    $default  reduce using rule 48 (unary_expr)
+
+
+state 52
+
+   12 declaration: VAR ID ASSIGN . expr SEMICOLON
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    expr                 go to state 74
+    or_expr              go to state 44
+    and_expr             go to state 45
+    equality_expr        go to state 46
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 53
+
+   18 if_start: IF LPAREN expr . RPAREN
+
+    RPAREN  shift, and go to state 75
+
+
+state 54
+
+   26 loop: WHILE @2 LPAREN . expr RPAREN @3 block
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    expr                 go to state 76
+    or_expr              go to state 44
+    and_expr             go to state 45
+    equality_expr        go to state 46
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 55
+
+   11 declaration: type ID ASSIGN . expr SEMICOLON
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    expr                 go to state 77
+    or_expr              go to state 44
+    and_expr             go to state 45
+    equality_expr        go to state 46
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 56
+
+   10 declaration: type ID SEMICOLON .
+
+    $default  reduce using rule 10 (declaration)
+
+
+state 57
+
+   21 conditional: if_start block @1 . ELSE else_part
+
+    ELSE  shift, and go to state 78
+
+
+state 58
+
+   47 unary_expr: MINUS unary_expr .
+
+    $default  reduce using rule 47 (unary_expr)
+
+
+state 59
+
+   46 unary_expr: NOT unary_expr .
+
+    $default  reduce using rule 46 (unary_expr)
+
+
+state 60
+
+   55 primary_expr: LPAREN expr . RPAREN
+
+    RPAREN  shift, and go to state 79
+
+
+state 61
+
+   17 assignment: ID ASSIGN expr SEMICOLON .
+
+    $default  reduce using rule 17 (assignment)
+
+
+state 62
+
+   28 or_expr: or_expr OR . and_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    and_expr             go to state 80
+    equality_expr        go to state 46
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 63
+
+   30 and_expr: and_expr AND . equality_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    equality_expr        go to state 81
+    relational_expr      go to state 47
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 64
+
+   32 equality_expr: equality_expr EQ . relational_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    relational_expr      go to state 82
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 65
+
+   33 equality_expr: equality_expr NEQ . relational_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    relational_expr      go to state 83
+    additive_expr        go to state 48
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 66
+
+   37 relational_expr: relational_expr LE . additive_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    additive_expr        go to state 84
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 67
+
+   38 relational_expr: relational_expr GE . additive_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    additive_expr        go to state 85
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 68
+
+   35 relational_expr: relational_expr LT . additive_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    additive_expr        go to state 86
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 69
+
+   36 relational_expr: relational_expr GT . additive_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    additive_expr        go to state 87
+    multiplicative_expr  go to state 49
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 70
+
+   40 additive_expr: additive_expr PLUS . multiplicative_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    multiplicative_expr  go to state 88
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 71
+
+   41 additive_expr: additive_expr MINUS . multiplicative_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    multiplicative_expr  go to state 89
+    unary_expr           go to state 50
+    primary_expr         go to state 51
+
+
+state 72
+
+   43 multiplicative_expr: multiplicative_expr MUL . unary_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    unary_expr    go to state 90
+    primary_expr  go to state 51
+
+
+state 73
+
+   44 multiplicative_expr: multiplicative_expr DIV . unary_expr
+
+    ID              shift, and go to state 34
+    NUM_INT         shift, and go to state 35
+    NUM_DOUBLE      shift, and go to state 36
+    STRING_LITERAL  shift, and go to state 37
+    TRUE_LIT        shift, and go to state 38
+    FALSE_LIT       shift, and go to state 39
+    MINUS           shift, and go to state 40
+    NOT             shift, and go to state 41
+    LPAREN          shift, and go to state 42
+
+    unary_expr    go to state 91
+    primary_expr  go to state 51
+
+
+state 74
+
+   12 declaration: VAR ID ASSIGN expr . SEMICOLON
+
+    SEMICOLON  shift, and go to state 92
+
+
+state 75
+
+   18 if_start: IF LPAREN expr RPAREN .
+
+    $default  reduce using rule 18 (if_start)
+
+
+state 76
+
+   26 loop: WHILE @2 LPAREN expr . RPAREN @3 block
+
+    RPAREN  shift, and go to state 93
+
+
+state 77
+
+   11 declaration: type ID ASSIGN expr . SEMICOLON
+
+    SEMICOLON  shift, and go to state 94
+
+
+state 78
+
+   21 conditional: if_start block @1 ELSE . else_part
+
+    IF      shift, and go to state 15
+    LBRACE  shift, and go to state 7
+
+    block        go to state 95
+    if_start     go to state 23
+    conditional  go to state 96
+    else_part    go to state 97
+
+
+state 79
+
+   55 primary_expr: LPAREN expr RPAREN .
+
+    $default  reduce using rule 55 (primary_expr)
+
+
+state 80
+
+   28 or_expr: or_expr OR and_expr .
+   30 and_expr: and_expr . AND equality_expr
+
+    AND  shift, and go to state 63
+
+    $default  reduce using rule 28 (or_expr)
+
+
+state 81
+
+   30 and_expr: and_expr AND equality_expr .
+   32 equality_expr: equality_expr . EQ relational_expr
+   33              | equality_expr . NEQ relational_expr
+
+    EQ   shift, and go to state 64
+    NEQ  shift, and go to state 65
+
+    $default  reduce using rule 30 (and_expr)
+
+
+state 82
+
+   32 equality_expr: equality_expr EQ relational_expr .
+   35 relational_expr: relational_expr . LT additive_expr
+   36                | relational_expr . GT additive_expr
+   37                | relational_expr . LE additive_expr
+   38                | relational_expr . GE additive_expr
+
+    LE  shift, and go to state 66
+    GE  shift, and go to state 67
+    LT  shift, and go to state 68
+    GT  shift, and go to state 69
+
+    $default  reduce using rule 32 (equality_expr)
+
+
+state 83
+
+   33 equality_expr: equality_expr NEQ relational_expr .
+   35 relational_expr: relational_expr . LT additive_expr
+   36                | relational_expr . GT additive_expr
+   37                | relational_expr . LE additive_expr
+   38                | relational_expr . GE additive_expr
+
+    LE  shift, and go to state 66
+    GE  shift, and go to state 67
+    LT  shift, and go to state 68
+    GT  shift, and go to state 69
+
+    $default  reduce using rule 33 (equality_expr)
+
+
+state 84
+
+   37 relational_expr: relational_expr LE additive_expr .
+   40 additive_expr: additive_expr . PLUS multiplicative_expr
+   41              | additive_expr . MINUS multiplicative_expr
+
+    PLUS   shift, and go to state 70
+    MINUS  shift, and go to state 71
+
+    $default  reduce using rule 37 (relational_expr)
+
+
+state 85
+
+   38 relational_expr: relational_expr GE additive_expr .
+   40 additive_expr: additive_expr . PLUS multiplicative_expr
+   41              | additive_expr . MINUS multiplicative_expr
+
+    PLUS   shift, and go to state 70
+    MINUS  shift, and go to state 71
+
+    $default  reduce using rule 38 (relational_expr)
+
+
+state 86
+
+   35 relational_expr: relational_expr LT additive_expr .
+   40 additive_expr: additive_expr . PLUS multiplicative_expr
+   41              | additive_expr . MINUS multiplicative_expr
+
+    PLUS   shift, and go to state 70
+    MINUS  shift, and go to state 71
+
+    $default  reduce using rule 35 (relational_expr)
+
+
+state 87
+
+   36 relational_expr: relational_expr GT additive_expr .
+   40 additive_expr: additive_expr . PLUS multiplicative_expr
+   41              | additive_expr . MINUS multiplicative_expr
+
+    PLUS   shift, and go to state 70
+    MINUS  shift, and go to state 71
+
+    $default  reduce using rule 36 (relational_expr)
+
+
+state 88
+
+   40 additive_expr: additive_expr PLUS multiplicative_expr .
+   43 multiplicative_expr: multiplicative_expr . MUL unary_expr
+   44                    | multiplicative_expr . DIV unary_expr
+
+    MUL  shift, and go to state 72
+    DIV  shift, and go to state 73
+
+    $default  reduce using rule 40 (additive_expr)
+
+
+state 89
+
+   41 additive_expr: additive_expr MINUS multiplicative_expr .
+   43 multiplicative_expr: multiplicative_expr . MUL unary_expr
+   44                    | multiplicative_expr . DIV unary_expr
+
+    MUL  shift, and go to state 72
+    DIV  shift, and go to state 73
+
+    $default  reduce using rule 41 (additive_expr)
+
+
+state 90
+
+   43 multiplicative_expr: multiplicative_expr MUL unary_expr .
+
+    $default  reduce using rule 43 (multiplicative_expr)
+
+
+state 91
+
+   44 multiplicative_expr: multiplicative_expr DIV unary_expr .
+
+    $default  reduce using rule 44 (multiplicative_expr)
+
+
+state 92
+
+   12 declaration: VAR ID ASSIGN expr SEMICOLON .
+
+    $default  reduce using rule 12 (declaration)
+
+
+state 93
+
+   26 loop: WHILE @2 LPAREN expr RPAREN . @3 block
+
+    $default  reduce using rule 25 (@3)
+
+    @3  go to state 98
+
+
+state 94
+
+   11 declaration: type ID ASSIGN expr SEMICOLON .
+
+    $default  reduce using rule 11 (declaration)
+
+
+state 95
+
+   22 else_part: block .
+
+    $default  reduce using rule 22 (else_part)
+
+
+state 96
+
+   23 else_part: conditional .
+
+    $default  reduce using rule 23 (else_part)
+
+
+state 97
+
+   21 conditional: if_start block @1 ELSE else_part .
+
+    $default  reduce using rule 21 (conditional)
+
+
+state 98
+
+   26 loop: WHILE @2 LPAREN expr RPAREN @3 . block
+
+    LBRACE  shift, and go to state 7
+
+    block  go to state 99
+
+
+state 99
+
+   26 loop: WHILE @2 LPAREN expr RPAREN @3 block .
+
+    $default  reduce using rule 26 (loop)
