@@ -17,7 +17,7 @@ Helper functions:
 
 Concatenation operator:
 
-- `A || B`: append TAC sequence `B` after `A`
+- `A ||| B`: append TAC sequence `B` after `A`
 
 ---
 
@@ -53,7 +53,7 @@ SDD:
 Block.code = StatementList.code
 
 StatementList -> Statement StatementList1
-    StatementList.code = Statement.code || StatementList1.code
+    StatementList.code = Statement.code ||| StatementList1.code
 
 StatementList -> eps
     StatementList.code = ""
@@ -94,10 +94,10 @@ Declaration -> Type id ;
     Declaration.code = ""
 
 Declaration -> Type id = Expression ;
-    Declaration.code = Expression.code || (id = Expression.place)
+    Declaration.code = Expression.code ||| (id = Expression.place)
 
 Declaration -> var id = Expression ;
-    Declaration.code = Expression.code || (id = Expression.place)
+    Declaration.code = Expression.code ||| (id = Expression.place)
 ```
 
 ---
@@ -113,7 +113,7 @@ Production:
 SDD:
 
 ```
-Assignment.code = Expression.code || (id = Expression.place)
+Assignment.code = Expression.code ||| (id = Expression.place)
 ```
 
 ---
@@ -124,7 +124,7 @@ Productions:
 
 ```
 <Expression> -> <Or>
-<Or> -> <Or> || <And> | <And>
+<Or> -> <Or> ||| <And> | <And>
 <And> -> <And> && <Equality> | <Equality>
 <Equality> -> <Equality> <EquOp> <Relational> | <Relational>
 <Relational> -> <Relational> <RelOp> <Additive> | <Additive>
@@ -145,9 +145,9 @@ Expression -> Or
     Expression.place = Or.place
     Expression.code  = Or.code
 
-Or -> Or1 || And
+Or -> Or1 ||| And
     Or.place = newtemp()
-    Or.code  = Or1.code || And.code || (Or.place = Or1.place || And.place)
+    Or.code  = Or1.code ||| And.code ||| (Or.place = Or1.place || And.place)
 
 Or -> And
     Or.place = And.place
@@ -155,7 +155,7 @@ Or -> And
 
 And -> And1 && Equality
     And.place = newtemp()
-    And.code  = And1.code || Equality.code || (And.place = And1.place && Equality.place)
+    And.code  = And1.code ||| Equality.code ||| (And.place = And1.place && Equality.place)
 
 And -> Equality
     And.place = Equality.place
@@ -163,7 +163,7 @@ And -> Equality
 
 Equality -> Equality1 EquOp Relational
     Equality.place = newtemp()
-    Equality.code  = Equality1.code || Relational.code ||
+    Equality.code  = Equality1.code ||| Relational.code |||
                      (Equality.place = Equality1.place EquOp.lexeme Relational.place)
 
 Equality -> Relational
@@ -172,7 +172,7 @@ Equality -> Relational
 
 Relational -> Relational1 RelOp Additive
     Relational.place = newtemp()
-    Relational.code  = Relational1.code || Additive.code ||
+    Relational.code  = Relational1.code ||| Additive.code |||
                        (Relational.place = Relational1.place RelOp.lexeme Additive.place)
 
 Relational -> Additive
@@ -181,7 +181,7 @@ Relational -> Additive
 
 Additive -> Additive1 AddOp Multiplicative
     Additive.place = newtemp()
-    Additive.code  = Additive1.code || Multiplicative.code ||
+    Additive.code  = Additive1.code ||| Multiplicative.code |||
                      (Additive.place = Additive1.place AddOp.lexeme Multiplicative.place)
 
 Additive -> Multiplicative
@@ -190,7 +190,7 @@ Additive -> Multiplicative
 
 Multiplicative -> Multiplicative1 MulOp Unary
     Multiplicative.place = newtemp()
-    Multiplicative.code  = Multiplicative1.code || Unary.code ||
+    Multiplicative.code  = Multiplicative1.code ||| Unary.code |||
                            (Multiplicative.place = Multiplicative1.place MulOp.lexeme Unary.place)
 
 Multiplicative -> Unary
@@ -199,11 +199,11 @@ Multiplicative -> Unary
 
 Unary -> ! Unary1
     Unary.place = newtemp()
-    Unary.code  = Unary1.code || (Unary.place = ! Unary1.place)
+    Unary.code  = Unary1.code ||| (Unary.place = ! Unary1.place)
 
 Unary -> - Unary1
     Unary.place = newtemp()
-    Unary.code  = Unary1.code || (Unary.place = - Unary1.place)
+    Unary.code  = Unary1.code ||| (Unary.place = - Unary1.place)
 
 Unary -> Primary
     Unary.place = Primary.place
@@ -251,31 +251,31 @@ SDD:
 ```
 Conditional -> if ( Expression ) Block
     L1 = newlabel()
-    Conditional.code = Expression.code ||
-                       (if Expression.place == false goto L1) ||
-                       Block.code ||
+    Conditional.code = Expression.code |||
+                       (if Expression.place == false goto L1) |||
+                       Block.code |||
                        (L1:)
 
 Conditional -> if ( Expression ) Block1 else Conditional2
     L1 = newlabel()
     L2 = newlabel()
-    Conditional.code = Expression.code ||
-                       (if Expression.place == false goto L1) ||
-                       Block1.code ||
-                       (goto L2) ||
-                       (L1:) ||
-                       Conditional2.code ||
+    Conditional.code = Expression.code |||
+                       (if Expression.place == false goto L1) |||
+                       Block1.code |||
+                       (goto L2) |||
+                       (L1:) |||
+                       Conditional2.code |||
                        (L2:)
 
 Conditional -> if ( Expression ) Block1 else Block2
     L1 = newlabel()
     L2 = newlabel()
-    Conditional.code = Expression.code ||
-                       (if Expression.place == false goto L1) ||
-                       Block1.code ||
-                       (goto L2) ||
-                       (L1:) ||
-                       Block2.code ||
+    Conditional.code = Expression.code |||
+                       (if Expression.place == false goto L1) |||
+                       Block1.code |||
+                       (goto L2) |||
+                       (L1:) |||
+                       Block2.code |||
                        (L2:)
 ```
 
@@ -295,10 +295,10 @@ SDD:
 Loop -> while ( Expression ) Block
     L1 = newlabel()
     L2 = newlabel()
-    Loop.code = (L1:) ||
-                Expression.code ||
-                (if Expression.place == false goto L2) ||
-                Block.code ||
-                (goto L1) ||
+    Loop.code = (L1:) |||
+                Expression.code |||
+                (if Expression.place == false goto L2) |||
+                Block.code |||
+                (goto L1) |||
                 (L2:)
 ```
