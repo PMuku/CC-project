@@ -3,3 +3,4 @@ lex.yy.c
 *output*
 dart_parser.tab.c
 dart_parser.tab.h
+notes.md

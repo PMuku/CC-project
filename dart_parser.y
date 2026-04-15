@@ -7,7 +7,6 @@ extern int line;
 extern FILE *yyin;
 static FILE *tac_out = NULL;
 
-/* -------- TEMP & LABEL -------- */
 static int temp_count = 0;
 static char *newtemp(void) {
     char *b = malloc(16);
@@ -22,7 +21,6 @@ static char *newlabel(void) {
     return b;
 }
 
-/* -------- EMIT FUNCTIONS -------- */
 static void emit(const char *s) {
     fprintf(tac_out, "    %s\n", s);
 }
@@ -31,14 +29,12 @@ static void emit_label(const char *lbl) {
     fprintf(tac_out, "%s:\n", lbl);
 }
 
-/* helper for binary ops */
 static void emit_binop(char* res, char* a, const char* op, char* b) {
     char buf[256];
     snprintf(buf, sizeof buf, "%s = %s %s %s", res, a, op, b);
     emit(buf);
 }
 
-/* helper for unary ops */
 static void emit_unary(char* res, const char* op, char* val) {
     char buf[256];
     snprintf(buf, sizeof buf, "%s = %s%s", res, op, val);
@@ -49,10 +45,8 @@ void yyerror(const char *s);
 int yylex(void);
 %}
 
-/* -------- TYPES -------- */
 %union { char *sval; }
 
-/* -------- TOKENS -------- */
 %token <sval> ID NUM_INT NUM_DOUBLE STRING_LITERAL TRUE_LIT FALSE_LIT
 
 %token VOID MAIN
@@ -68,7 +62,6 @@ int yylex(void);
 
 %token LPAREN RPAREN LBRACE RBRACE SEMICOLON COMMA
 
-/* -------- TYPES -------- */
 %type <sval> expr or_expr and_expr equality_expr relational_expr
 %type <sval> additive_expr multiplicative_expr unary_expr primary_expr
 %type <sval> if_guard
@@ -78,12 +71,10 @@ int yylex(void);
 
 %%
 
-/* -------- PROGRAM -------- */
 program
     : VOID MAIN LPAREN RPAREN block
     ;
 
-/* -------- BLOCK -------- */
 block
     : LBRACE stmt_list RBRACE
     ;
@@ -101,7 +92,6 @@ stmt
     | block
     ;
 
-/* -------- DECLARATION -------- */
 type
     : INT_TYPE
     | DOUBLE_TYPE
@@ -130,7 +120,6 @@ declaration
         }
     ;
 
-/* -------- ASSIGNMENT -------- */
 assignment
     : ID ASSIGN expr SEMICOLON
         {
@@ -141,7 +130,6 @@ assignment
         }
     ;
 
-/* -------- IF -------- */
 if_guard
     : IF LPAREN expr RPAREN
         {
@@ -183,7 +171,6 @@ else_part
     | conditional
     ;
 
-/* -------- WHILE -------- */
 loop
     : WHILE
         {
@@ -211,7 +198,6 @@ loop
         }
     ;
 
-/* -------- EXPRESSIONS -------- */
 expr : or_expr { $$ = $1; };
 
 or_expr
