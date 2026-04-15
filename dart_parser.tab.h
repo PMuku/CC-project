@@ -59,22 +59,22 @@
      AND = 275,
      EQ = 276,
      NEQ = 277,
-     LE = 278,
-     GE = 279,
-     LT = 280,
-     GT = 281,
+     LT = 278,
+     GT = 279,
+     LE = 280,
+     GE = 281,
      PLUS = 282,
      MINUS = 283,
      MUL = 284,
      DIV = 285,
      ASSIGN = 286,
      NOT = 287,
-     SEMICOLON = 288,
-     COMMA = 289,
-     LPAREN = 290,
-     RPAREN = 291,
-     LBRACE = 292,
-     RBRACE = 293,
+     LPAREN = 288,
+     RPAREN = 289,
+     LBRACE = 290,
+     RBRACE = 291,
+     SEMICOLON = 292,
+     COMMA = 293,
      LOWER_THAN_ELSE = 294
    };
 #endif
@@ -99,22 +99,22 @@
 #define AND 275
 #define EQ 276
 #define NEQ 277
-#define LE 278
-#define GE 279
-#define LT 280
-#define GT 281
+#define LT 278
+#define GT 279
+#define LE 280
+#define GE 281
 #define PLUS 282
 #define MINUS 283
 #define MUL 284
 #define DIV 285
 #define ASSIGN 286
 #define NOT 287
-#define SEMICOLON 288
-#define COMMA 289
-#define LPAREN 290
-#define RPAREN 291
-#define LBRACE 292
-#define RBRACE 293
+#define LPAREN 288
+#define RPAREN 289
+#define LBRACE 290
+#define RBRACE 291
+#define SEMICOLON 292
+#define COMMA 293
 #define LOWER_THAN_ELSE 294
 
 
@@ -122,12 +122,10 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 40 "dart_parser.y"
-{
-    char *sval;
-}
+#line 58 "dart_parser.y"
+{ char *sval; }
 /* Line 1529 of yacc.c.  */
-#line 131 "dart_parser.tab.h"
+#line 129 "dart_parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

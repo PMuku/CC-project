@@ -86,22 +86,22 @@
      AND = 275,
      EQ = 276,
      NEQ = 277,
-     LE = 278,
-     GE = 279,
-     LT = 280,
-     GT = 281,
+     LT = 278,
+     GT = 279,
+     LE = 280,
+     GE = 281,
      PLUS = 282,
      MINUS = 283,
      MUL = 284,
      DIV = 285,
      ASSIGN = 286,
      NOT = 287,
-     SEMICOLON = 288,
-     COMMA = 289,
-     LPAREN = 290,
-     RPAREN = 291,
-     LBRACE = 292,
-     RBRACE = 293,
+     LPAREN = 288,
+     RPAREN = 289,
+     LBRACE = 290,
+     RBRACE = 291,
+     SEMICOLON = 292,
+     COMMA = 293,
      LOWER_THAN_ELSE = 294
    };
 #endif
@@ -126,22 +126,22 @@
 #define AND 275
 #define EQ 276
 #define NEQ 277
-#define LE 278
-#define GE 279
-#define LT 280
-#define GT 281
+#define LT 278
+#define GT 279
+#define LE 280
+#define GE 281
 #define PLUS 282
 #define MINUS 283
 #define MUL 284
 #define DIV 285
 #define ASSIGN 286
 #define NOT 287
-#define SEMICOLON 288
-#define COMMA 289
-#define LPAREN 290
-#define RPAREN 291
-#define LBRACE 292
-#define RBRACE 293
+#define LPAREN 288
+#define RPAREN 289
+#define LBRACE 290
+#define RBRACE 291
+#define SEMICOLON 292
+#define COMMA 293
 #define LOWER_THAN_ELSE 294
 
 
@@ -150,37 +150,53 @@
 /* Copy the first part of user declarations.  */
 #line 1 "dart_parser.y"
 
+/*
+ * dart_parser.y
+ * Bison parser generated directly from SDD.md.
+ *
+ * Attribute model (from SDD §Attribute Scheme):
+ *   - Expression-like nonterminals carry a synthesised .place (char *$$)
+ *     and emit their .code as side-effects via emit().
+ *   - Statement-like nonterminals have no return value; they emit their
+ *     .code as side-effects.
+ *
+ * SDD helper functions:
+ *   newtemp()  -> t1, t2, t3, ...
+ *   newlabel() -> L1, L2, L3, ...
+ *   |||        -> TAC-sequence concatenation (ordering of emit() calls)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-extern int line;
+extern int   line;
 extern FILE *yyin;
 
-/* ---- TAC generation helpers ---- */
-static int temp_count  = 0;
+/* --- SDD helper: newtemp() --- */
+static int temp_count = 0;
+static char *newtemp(void) {
+    char *b = malloc(16);
+    snprintf(b, 16, "t%d", ++temp_count);
+    return b;
+}
+
+/* --- SDD helper: newlabel() --- */
 static int label_count = 0;
-
-static char *new_temp(void) {
-    char *buf = (char *)malloc(16);
-    snprintf(buf, 16, "t%d", ++temp_count);
-    return buf;
+static char *newlabel(void) {
+    char *b = malloc(16);
+    snprintf(b, 16, "L%d", ++label_count);
+    return b;
 }
 
-static char *new_label(void) {
-    char *buf = (char *)malloc(16);
-    snprintf(buf, 16, "L%d", ++label_count);
-    return buf;
+/* Emit one TAC instruction (indented) */
+static void emit(const char *s) {
+    printf("    %s\n", s);
 }
 
-/* Emit a TAC instruction (indented) */
-static void emit(const char *code) {
-    printf("    %s\n", code);
-}
-
-/* Emit a label (flush left) */
-static void emit_label(const char *label) {
-    printf("%s:\n", label);
+/* Emit a label definition (flush-left) */
+static void emit_label(const char *lbl) {
+    printf("%s:\n", lbl);
 }
 
 void yyerror(const char *s);
@@ -207,12 +223,10 @@ int  yylex(void);
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 40 "dart_parser.y"
-{
-    char *sval;
-}
+#line 58 "dart_parser.y"
+{ char *sval; }
 /* Line 193 of yacc.c.  */
-#line 216 "dart_parser.tab.c"
+#line 230 "dart_parser.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -225,7 +239,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 229 "dart_parser.tab.c"
+#line 243 "dart_parser.tab.c"
 
 #ifdef short
 # undef short
@@ -499,7 +513,7 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     9,    13,    16,    17,    19,    21,    23,
-      25,    27,    31,    37,    43,    45,    47,    49,    51,    56,
+      25,    27,    29,    31,    33,    35,    39,    45,    51,    56,
       61,    64,    65,    71,    73,    75,    76,    77,    85,    87,
       91,    93,    97,    99,   103,   107,   109,   113,   117,   121,
      125,   127,   131,   135,   137,   141,   145,   147,   150,   153,
@@ -509,35 +523,35 @@ static const yytype_uint8 yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      41,     0,    -1,     9,    10,    35,    36,    42,    -1,    37,
-      43,    38,    -1,    44,    43,    -1,    -1,    45,    -1,    47,
-      -1,    49,    -1,    52,    -1,    42,    -1,    46,     3,    33,
-      -1,    46,     3,    31,    55,    33,    -1,    15,     3,    31,
-      55,    33,    -1,    11,    -1,    12,    -1,    13,    -1,    14,
-      -1,     3,    31,    55,    33,    -1,    16,    35,    55,    36,
+      41,     0,    -1,     9,    10,    33,    34,    42,    -1,    35,
+      43,    36,    -1,    44,    43,    -1,    -1,    46,    -1,    47,
+      -1,    49,    -1,    52,    -1,    42,    -1,    11,    -1,    12,
+      -1,    13,    -1,    14,    -1,    45,     3,    37,    -1,    45,
+       3,    31,    55,    37,    -1,    15,     3,    31,    55,    37,
+      -1,     3,    31,    55,    37,    -1,    16,    33,    55,    34,
       -1,    48,    42,    -1,    -1,    48,    42,    50,    17,    51,
-      -1,    42,    -1,    49,    -1,    -1,    -1,    18,    53,    35,
-      55,    36,    54,    42,    -1,    56,    -1,    56,    19,    57,
+      -1,    42,    -1,    49,    -1,    -1,    -1,    18,    53,    33,
+      55,    34,    54,    42,    -1,    56,    -1,    56,    19,    57,
       -1,    57,    -1,    57,    20,    58,    -1,    58,    -1,    58,
       21,    59,    -1,    58,    22,    59,    -1,    59,    -1,    59,
-      25,    60,    -1,    59,    26,    60,    -1,    59,    23,    60,
-      -1,    59,    24,    60,    -1,    60,    -1,    60,    27,    61,
+      23,    60,    -1,    59,    24,    60,    -1,    59,    25,    60,
+      -1,    59,    26,    60,    -1,    60,    -1,    60,    27,    61,
       -1,    60,    28,    61,    -1,    61,    -1,    61,    29,    62,
       -1,    61,    30,    62,    -1,    62,    -1,    32,    62,    -1,
       28,    62,    -1,    63,    -1,     3,    -1,     4,    -1,     5,
-      -1,     6,    -1,     7,    -1,     8,    -1,    35,    55,    36,
+      -1,     6,    -1,     7,    -1,     8,    -1,    33,    55,    34,
       -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    80,    80,    87,    91,    92,    96,    97,    98,    99,
-     100,   109,   112,   120,   130,   131,   132,   133,   140,   154,
-     185,   193,   192,   213,   214,   228,   235,   227,   262,   266,
-     275,   279,   288,   292,   301,   310,   314,   323,   332,   341,
-     350,   354,   363,   372,   376,   385,   394,   398,   407,   416,
-     420,   421,   422,   423,   424,   425,   426
+       0,   101,   101,   118,   122,   123,   127,   128,   129,   130,
+     131,   149,   150,   151,   152,   156,   162,   173,   192,   236,
+     249,   257,   256,   279,   280,   301,   307,   300,   335,   339,
+     351,   356,   368,   374,   383,   392,   398,   407,   416,   425,
+     434,   440,   449,   458,   464,   473,   482,   487,   498,   509,
+     517,   518,   519,   520,   521,   522,   523
 };
 #endif
 
@@ -549,10 +563,10 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "ID", "NUM_INT", "NUM_DOUBLE",
   "STRING_LITERAL", "TRUE_LIT", "FALSE_LIT", "VOID", "MAIN", "INT_TYPE",
   "DOUBLE_TYPE", "BOOL_TYPE", "STRING_TYPE", "VAR", "IF", "ELSE", "WHILE",
-  "OR", "AND", "EQ", "NEQ", "LE", "GE", "LT", "GT", "PLUS", "MINUS", "MUL",
-  "DIV", "ASSIGN", "NOT", "SEMICOLON", "COMMA", "LPAREN", "RPAREN",
-  "LBRACE", "RBRACE", "LOWER_THAN_ELSE", "$accept", "program", "block",
-  "stmt_list", "stmt", "declaration", "type", "assignment", "if_start",
+  "OR", "AND", "EQ", "NEQ", "LT", "GT", "LE", "GE", "PLUS", "MINUS", "MUL",
+  "DIV", "ASSIGN", "NOT", "LPAREN", "RPAREN", "LBRACE", "RBRACE",
+  "SEMICOLON", "COMMA", "LOWER_THAN_ELSE", "$accept", "program", "block",
+  "stmt_list", "stmt", "type", "declaration", "assignment", "if_guard",
   "conditional", "@1", "else_part", "loop", "@2", "@3", "expr", "or_expr",
   "and_expr", "equality_expr", "relational_expr", "additive_expr",
   "multiplicative_expr", "unary_expr", "primary_expr", 0
@@ -575,7 +589,7 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    40,    41,    42,    43,    43,    44,    44,    44,    44,
-      44,    45,    45,    45,    46,    46,    46,    46,    47,    48,
+      44,    45,    45,    45,    45,    46,    46,    46,    47,    48,
       49,    50,    49,    51,    51,    53,    54,    52,    55,    56,
       56,    57,    57,    58,    58,    58,    59,    59,    59,    59,
       59,    60,    60,    60,    61,    61,    61,    62,    62,    62,
@@ -586,7 +600,7 @@ static const yytype_uint8 yyr1[] =
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     5,     3,     2,     0,     1,     1,     1,     1,
-       1,     3,     5,     5,     1,     1,     1,     1,     4,     4,
+       1,     1,     1,     1,     1,     3,     5,     5,     4,     4,
        2,     0,     5,     1,     1,     0,     0,     7,     1,     3,
        1,     3,     1,     3,     3,     1,     3,     3,     3,     3,
        1,     3,     3,     1,     3,     3,     1,     2,     2,     1,
@@ -599,15 +613,15 @@ static const yytype_uint8 yyr2[] =
 static const yytype_uint8 yydefact[] =
 {
        0,     0,     0,     0,     1,     0,     0,     5,     2,     0,
-      14,    15,    16,    17,     0,     0,    25,    10,     0,     5,
-       6,     0,     7,     0,     8,     9,     0,     0,     0,     0,
+      11,    12,    13,    14,     0,     0,    25,    10,     0,     5,
+       0,     6,     7,     0,     8,     9,     0,     0,     0,     0,
        3,     4,     0,    20,    50,    51,    52,    53,    54,    55,
        0,     0,     0,     0,    28,    30,    32,    35,    40,    43,
-      46,    49,     0,     0,     0,     0,    11,     0,    48,    47,
+      46,    49,     0,     0,     0,     0,    15,     0,    48,    47,
        0,    18,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,    19,     0,     0,     0,    56,
-      29,    31,    33,    34,    38,    39,    36,    37,    41,    42,
-      44,    45,    13,    26,    12,    23,    24,    22,     0,    27
+      29,    31,    33,    34,    36,    37,    38,    39,    41,    42,
+      44,    45,    17,    26,    16,    23,    24,    22,     0,    27
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -620,27 +634,27 @@ static const yytype_int8 yydefgoto[] =
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -37
+#define YYPACT_NINF -40
 static const yytype_int8 yypact[] =
 {
-      19,    24,    25,     3,   -37,     4,    18,    -2,   -37,    13,
-     -37,   -37,   -37,   -37,    55,    26,   -37,   -37,    21,    -2,
-     -37,    57,   -37,    18,   -37,   -37,    15,    31,    15,    28,
-     -37,   -37,    -7,    47,   -37,   -37,   -37,   -37,   -37,   -37,
-      15,    15,    15,    32,    48,    46,   -19,     7,   -20,    16,
-     -37,   -37,    15,    33,    15,    15,   -37,    51,   -37,   -37,
-      34,   -37,    15,    15,    15,    15,    15,    15,    15,    15,
-      15,    15,    15,    15,    38,   -37,    37,    41,   -10,   -37,
-      46,   -19,     7,     7,   -20,   -20,   -20,   -20,    16,    16,
-     -37,   -37,   -37,   -37,   -37,   -37,   -37,   -37,    18,   -37
+      -4,    -1,    43,    18,   -40,    13,    21,     0,   -40,    26,
+     -40,   -40,   -40,   -40,    55,    27,   -40,   -40,    23,     0,
+      58,   -40,   -40,    21,   -40,   -40,    16,    31,    16,    30,
+     -40,   -40,   -27,    47,   -40,   -40,   -40,   -40,   -40,   -40,
+      16,    16,    16,    28,    48,    46,   -14,     4,    14,     2,
+     -40,   -40,    16,    34,    16,    16,   -40,    52,   -40,   -40,
+      36,   -40,    16,    16,    16,    16,    16,    16,    16,    16,
+      16,    16,    16,    16,    37,   -40,    39,    38,   -10,   -40,
+      46,   -14,     4,     4,    14,    14,    14,    14,     2,     2,
+     -40,   -40,   -40,   -40,   -40,   -40,   -40,   -40,    21,   -40
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -37,   -37,    -6,    56,   -37,   -37,   -37,   -37,   -37,    -1,
-     -37,   -37,   -37,   -37,   -37,   -13,   -37,    14,    17,   -16,
-     -15,   -14,   -36,   -37
+     -40,   -40,    -6,    57,   -40,   -40,   -40,   -40,   -40,    -7,
+     -40,   -40,   -40,   -40,   -40,    -2,   -40,    15,    17,   -19,
+     -30,   -16,   -39,   -40
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -650,28 +664,28 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -22
 static const yytype_int8 yytable[] =
 {
-       8,     9,    64,    65,    58,    59,    15,    70,    71,    10,
-      11,    12,    13,    14,    15,    53,    16,    33,    34,    35,
-      36,    37,    38,    39,    55,     4,    56,     7,     1,    60,
-      66,    67,    68,    69,     3,     7,    90,    91,     5,    74,
-       6,    76,    77,    40,    26,    72,    73,    41,    82,    83,
-      42,    84,    85,    86,    87,     7,    88,    89,    27,    30,
-      32,    28,    52,    54,   -21,    61,    63,    62,    78,    75,
-      79,    92,    95,    93,    94,    31,    80,    96,     0,     0,
+       8,    58,    59,     9,    55,     1,    15,    64,    65,     3,
+      56,    10,    11,    12,    13,    14,    15,    33,    16,    34,
+      35,    36,    37,    38,    39,     7,    53,    66,    67,    68,
+      69,    72,    73,    90,    91,     7,    84,    85,    86,    87,
+      60,    70,    71,     4,    40,    82,    83,     6,    41,    42,
+      74,     5,    76,    77,    88,    89,     7,    26,    27,    30,
+      28,    32,    52,    54,   -21,    61,    63,    62,    75,    78,
+      79,    96,    95,    93,    92,    94,    31,    80,     0,     0,
       81,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,    99
 };
 
 static const yytype_int8 yycheck[] =
 {
-       6,     3,    21,    22,    40,    41,    16,    27,    28,    11,
-      12,    13,    14,    15,    16,    28,    18,    23,     3,     4,
-       5,     6,     7,     8,    31,     0,    33,    37,     9,    42,
-      23,    24,    25,    26,    10,    37,    72,    73,    35,    52,
-      36,    54,    55,    28,    31,    29,    30,    32,    64,    65,
-      35,    66,    67,    68,    69,    37,    70,    71,     3,    38,
-       3,    35,    31,    35,    17,    33,    20,    19,    17,    36,
-      36,    33,    78,    36,    33,    19,    62,    78,    -1,    -1,
+       6,    40,    41,     3,    31,     9,    16,    21,    22,    10,
+      37,    11,    12,    13,    14,    15,    16,    23,    18,     3,
+       4,     5,     6,     7,     8,    35,    28,    23,    24,    25,
+      26,    29,    30,    72,    73,    35,    66,    67,    68,    69,
+      42,    27,    28,     0,    28,    64,    65,    34,    32,    33,
+      52,    33,    54,    55,    70,    71,    35,    31,     3,    36,
+      33,     3,    31,    33,    17,    37,    20,    19,    34,    17,
+      34,    78,    78,    34,    37,    37,    19,    62,    -1,    -1,
       63,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    98
 };
@@ -680,16 +694,16 @@ static const yytype_int8 yycheck[] =
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     9,    41,    10,     0,    35,    36,    37,    42,     3,
+       0,     9,    41,    10,     0,    33,    34,    35,    42,     3,
       11,    12,    13,    14,    15,    16,    18,    42,    43,    44,
-      45,    46,    47,    48,    49,    52,    31,     3,    35,    53,
-      38,    43,     3,    42,     3,     4,     5,     6,     7,     8,
-      28,    32,    35,    55,    56,    57,    58,    59,    60,    61,
-      62,    63,    31,    55,    35,    31,    33,    50,    62,    62,
-      55,    33,    19,    20,    21,    22,    23,    24,    25,    26,
-      27,    28,    29,    30,    55,    36,    55,    55,    17,    36,
+      45,    46,    47,    48,    49,    52,    31,     3,    33,    53,
+      36,    43,     3,    42,     3,     4,     5,     6,     7,     8,
+      28,    32,    33,    55,    56,    57,    58,    59,    60,    61,
+      62,    63,    31,    55,    33,    31,    37,    50,    62,    62,
+      55,    37,    19,    20,    21,    22,    23,    24,    25,    26,
+      27,    28,    29,    30,    55,    34,    55,    55,    17,    34,
       57,    58,    59,    59,    60,    60,    60,    60,    61,    61,
-      62,    62,    33,    36,    33,    42,    49,    51,    54,    42
+      62,    62,    37,    34,    37,    42,    49,    51,    54,    42
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1503,131 +1517,145 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 11:
-#line 110 "dart_parser.y"
-    { free((yyvsp[(2) - (3)].sval)); /* no TAC for uninitialised declaration */ ;}
-    break;
-
-  case 12:
-#line 113 "dart_parser.y"
+        case 15:
+#line 157 "dart_parser.y"
     {
-            char buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s", (yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].sval));
-            emit(buf);
-            free((yyvsp[(2) - (5)].sval)); free((yyvsp[(4) - (5)].sval));
+            /* Declaration.code = "" */
+            free((yyvsp[(2) - (3)].sval));
         ;}
     break;
 
-  case 13:
-#line 121 "dart_parser.y"
+  case 16:
+#line 163 "dart_parser.y"
     {
+            /* Expression.code already emitted above.
+             * Emit: id = Expression.place  */
             char buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s", (yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].sval));
+            snprintf(buf, sizeof buf, "%s = %s", (yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].sval));
             emit(buf);
-            free((yyvsp[(2) - (5)].sval)); free((yyvsp[(4) - (5)].sval));
+            free((yyvsp[(2) - (5)].sval));
+            free((yyvsp[(4) - (5)].sval));
+        ;}
+    break;
+
+  case 17:
+#line 174 "dart_parser.y"
+    {
+            /* Expression.code already emitted above.
+             * Emit: id = Expression.place  */
+            char buf[512];
+            snprintf(buf, sizeof buf, "%s = %s", (yyvsp[(2) - (5)].sval), (yyvsp[(4) - (5)].sval));
+            emit(buf);
+            free((yyvsp[(2) - (5)].sval));
+            free((yyvsp[(4) - (5)].sval));
         ;}
     break;
 
   case 18:
-#line 141 "dart_parser.y"
+#line 193 "dart_parser.y"
     {
+            /* Expression.code already emitted above.
+             * Emit: id = Expression.place  */
             char buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s", (yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].sval));
+            snprintf(buf, sizeof buf, "%s = %s", (yyvsp[(1) - (4)].sval), (yyvsp[(3) - (4)].sval));
             emit(buf);
-            free((yyvsp[(1) - (4)].sval)); free((yyvsp[(3) - (4)].sval));
+            free((yyvsp[(1) - (4)].sval));
+            free((yyvsp[(3) - (4)].sval));
         ;}
     break;
 
   case 19:
-#line 155 "dart_parser.y"
+#line 237 "dart_parser.y"
     {
-            char *l_false = new_label();
+            char *L1 = newlabel();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "if_false %s goto %s", (yyvsp[(3) - (4)].sval), l_false);
-            emit(buf);
+            snprintf(buf, sizeof buf, "if_false %s goto %s", (yyvsp[(3) - (4)].sval), L1);
+            emit(buf);          /* (if Expression.place == false goto L1) */
             free((yyvsp[(3) - (4)].sval));
-            (yyval.sval) = l_false;     /* pass L_false up */
+            (yyval.sval) = L1;
         ;}
     break;
 
   case 20:
-#line 186 "dart_parser.y"
+#line 250 "dart_parser.y"
     {
-            emit_label((yyvsp[(1) - (2)].sval));
+            emit_label((yyvsp[(1) - (2)].sval));     /* (L1:) */
             free((yyvsp[(1) - (2)].sval));
         ;}
     break;
 
   case 21:
-#line 193 "dart_parser.y"
+#line 257 "dart_parser.y"
     {
-            /* $1 = L_false from if_start */
-            char *l_end = new_label();
+            /* After Block1.code has been emitted:
+             *   emit (goto L2)
+             *   emit (L1:)
+             *   carry L2 to the closing action  */
+            char *L2 = newlabel();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "goto %s", l_end);
-            emit(buf);
-            emit_label((yyvsp[(1) - (2)].sval));   /* L_false: */
+            snprintf(buf, sizeof buf, "goto %s", L2);
+            emit(buf);          /* (goto L2) */
+            emit_label((yyvsp[(1) - (2)].sval));     /* (L1:)     */
             free((yyvsp[(1) - (2)].sval));
-            (yyval.sval) = l_end; /* becomes $3 — carry L_end forward */
+            (yyval.sval) = L2;      /* becomes $3 */
         ;}
     break;
 
   case 22:
-#line 204 "dart_parser.y"
+#line 271 "dart_parser.y"
     {
-            /* $<sval>3 = L_end */
-            emit_label((yyvsp[(3) - (5)].sval));
+            emit_label((yyvsp[(3) - (5)].sval)); /* (L2:) */
             free((yyvsp[(3) - (5)].sval));
         ;}
     break;
 
   case 25:
-#line 228 "dart_parser.y"
+#line 301 "dart_parser.y"
     {
-            /* mid-rule $2: emit L_start: and save it */
-            char *ls = new_label();
-            emit_label(ls);
-            (yyval.sval) = ls;
+            char *L1 = newlabel();
+            emit_label(L1);     /* (L1:) */
+            (yyval.sval) = L1;      /* carry L1 — becomes $2 */
         ;}
     break;
 
   case 26:
-#line 235 "dart_parser.y"
+#line 307 "dart_parser.y"
     {
-            /* mid-rule $6: emit conditional jump and save L_end */
-            char *le  = new_label();
+            char *L2 = newlabel();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "if_false %s goto %s", (yyvsp[(4) - (5)].sval), le);
-            emit(buf);
+            snprintf(buf, sizeof buf, "if_false %s goto %s", (yyvsp[(4) - (5)].sval), L2);
+            emit(buf);          /* (if Expression.place == false goto L2) */
             free((yyvsp[(4) - (5)].sval));
-            (yyval.sval) = le;
+            (yyval.sval) = L2;      /* carry L2 — becomes $6 */
         ;}
     break;
 
   case 27:
-#line 245 "dart_parser.y"
+#line 316 "dart_parser.y"
     {
-            /* emit back-edge and close loop */
             char buf[512];
-            snprintf(buf, sizeof(buf), "goto %s", (yyvsp[(2) - (7)].sval));
-            emit(buf);
-            emit_label((yyvsp[(6) - (7)].sval));
+            snprintf(buf, sizeof buf, "goto %s", (yyvsp[(2) - (7)].sval));
+            emit(buf);            /* (goto L1) */
+            emit_label((yyvsp[(6) - (7)].sval)); /* (L2:)     */
             free((yyvsp[(2) - (7)].sval));
             free((yyvsp[(6) - (7)].sval));
         ;}
     break;
 
   case 28:
-#line 262 "dart_parser.y"
+#line 335 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 29:
-#line 267 "dart_parser.y"
+#line 340 "dart_parser.y"
     {
-            char *t = new_temp();
+            /* Or.place = newtemp()
+             * Or.code  = Or1.code ||| And.code |||
+             *             (Or.place = Or1.place || And.place)   */
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s || %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s || %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1635,16 +1663,19 @@ yyreduce:
     break;
 
   case 30:
-#line 275 "dart_parser.y"
+#line 351 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 31:
-#line 280 "dart_parser.y"
+#line 357 "dart_parser.y"
     {
-            char *t = new_temp();
+            /* And.place = newtemp()
+             * And.code  = And1.code ||| Equality.code |||
+             *             (And.place = And1.place && Equality.place) */
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s && %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s && %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1652,16 +1683,16 @@ yyreduce:
     break;
 
   case 32:
-#line 288 "dart_parser.y"
+#line 368 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 33:
-#line 293 "dart_parser.y"
+#line 375 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s == %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s == %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1669,11 +1700,11 @@ yyreduce:
     break;
 
   case 34:
-#line 302 "dart_parser.y"
+#line 384 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s != %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s != %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1681,16 +1712,16 @@ yyreduce:
     break;
 
   case 35:
-#line 310 "dart_parser.y"
+#line 392 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 36:
-#line 315 "dart_parser.y"
+#line 399 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s < %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s < %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1698,11 +1729,11 @@ yyreduce:
     break;
 
   case 37:
-#line 324 "dart_parser.y"
+#line 408 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s > %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s > %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1710,11 +1741,11 @@ yyreduce:
     break;
 
   case 38:
-#line 333 "dart_parser.y"
+#line 417 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s <= %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s <= %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1722,11 +1753,11 @@ yyreduce:
     break;
 
   case 39:
-#line 342 "dart_parser.y"
+#line 426 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s >= %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s >= %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1734,16 +1765,16 @@ yyreduce:
     break;
 
   case 40:
-#line 350 "dart_parser.y"
+#line 434 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 41:
-#line 355 "dart_parser.y"
+#line 441 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s + %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s + %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1751,11 +1782,11 @@ yyreduce:
     break;
 
   case 42:
-#line 364 "dart_parser.y"
+#line 450 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s - %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s - %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1763,16 +1794,16 @@ yyreduce:
     break;
 
   case 43:
-#line 372 "dart_parser.y"
+#line 458 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 44:
-#line 377 "dart_parser.y"
+#line 465 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s * %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s * %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1780,11 +1811,11 @@ yyreduce:
     break;
 
   case 45:
-#line 386 "dart_parser.y"
+#line 474 "dart_parser.y"
     {
-            char *t = new_temp();
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = %s / %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
+            snprintf(buf, sizeof buf, "%s = %s / %s", t, (yyvsp[(1) - (3)].sval), (yyvsp[(3) - (3)].sval));
             emit(buf);
             free((yyvsp[(1) - (3)].sval)); free((yyvsp[(3) - (3)].sval));
             (yyval.sval) = t;
@@ -1792,16 +1823,18 @@ yyreduce:
     break;
 
   case 46:
-#line 394 "dart_parser.y"
+#line 482 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 47:
-#line 399 "dart_parser.y"
+#line 488 "dart_parser.y"
     {
-            char *t = new_temp();
+            /* Unary.place = newtemp()
+             * Unary.code  = Unary1.code ||| (Unary.place = ! Unary1.place) */
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = !%s", t, (yyvsp[(2) - (2)].sval));
+            snprintf(buf, sizeof buf, "%s = !%s", t, (yyvsp[(2) - (2)].sval));
             emit(buf);
             free((yyvsp[(2) - (2)].sval));
             (yyval.sval) = t;
@@ -1809,11 +1842,13 @@ yyreduce:
     break;
 
   case 48:
-#line 408 "dart_parser.y"
+#line 499 "dart_parser.y"
     {
-            char *t = new_temp();
+            /* Unary.place = newtemp()
+             * Unary.code  = Unary1.code ||| (Unary.place = - Unary1.place) */
+            char *t = newtemp();
             char  buf[512];
-            snprintf(buf, sizeof(buf), "%s = -%s", t, (yyvsp[(2) - (2)].sval));
+            snprintf(buf, sizeof buf, "%s = -%s", t, (yyvsp[(2) - (2)].sval));
             emit(buf);
             free((yyvsp[(2) - (2)].sval));
             (yyval.sval) = t;
@@ -1821,48 +1856,48 @@ yyreduce:
     break;
 
   case 49:
-#line 416 "dart_parser.y"
+#line 509 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 50:
-#line 420 "dart_parser.y"
+#line 517 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 51:
-#line 421 "dart_parser.y"
+#line 518 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 52:
-#line 422 "dart_parser.y"
+#line 519 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 53:
-#line 423 "dart_parser.y"
+#line 520 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 54:
-#line 424 "dart_parser.y"
+#line 521 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 55:
-#line 425 "dart_parser.y"
+#line 522 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(1) - (1)].sval); ;}
     break;
 
   case 56:
-#line 426 "dart_parser.y"
+#line 523 "dart_parser.y"
     { (yyval.sval) = (yyvsp[(2) - (3)].sval); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1866 "dart_parser.tab.c"
+#line 1901 "dart_parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2076,33 +2111,23 @@ yyreturn:
 }
 
 
-#line 429 "dart_parser.y"
+#line 526 "dart_parser.y"
 
 
-/* ==================================================================
-   Error handler
-   ================================================================== */
 void yyerror(const char *s) {
     fprintf(stderr, "Syntax Error (line %d): %s\n", line, s);
 }
 
-/* ==================================================================
-   Entry point
-   ================================================================== */
 int main(int argc, char **argv) {
     if (argc > 1) {
         FILE *fp = fopen(argv[1], "r");
-        if (!fp) {
-            perror("Cannot open file");
-            return 1;
-        }
+        if (!fp) { perror("Cannot open file"); return 1; }
         yyin = fp;
     }
-
     printf("=== Three-Address Code ===\n");
-    int result = yyparse();
-    if (result == 0)
+    int r = yyparse();
+    if (r == 0)
         printf("\n[Parse successful — no syntax errors]\n");
-    return result;
+    return r;
 }
 
