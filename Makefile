@@ -14,8 +14,8 @@ dart_parser.tab.c dart_parser.tab.h: dart_parser.y
 	$(BISON) -d -o dart_parser.tab.c dart_parser.y
 
 # 2. Generate lexer from Flex spec (needs the Bison header for token codes)
-lex.yy.c: dart_lexer_p2.l dart_parser.tab.h
-	$(FLEX) -o lex.yy.c dart_lexer_p2.l
+lex.yy.c: dart_lexer.l dart_parser.tab.h
+	$(FLEX) -o lex.yy.c dart_lexer.l
 
 # 3. Compile both generated C files into one binary
 $(TARGET): lex.yy.c dart_parser.tab.c dart_parser.tab.h
@@ -24,12 +24,12 @@ $(TARGET): lex.yy.c dart_parser.tab.c dart_parser.tab.h
 # Run on valid test program
 test_valid: $(TARGET)
 	@echo "====== Valid program ======"
-	./$(TARGET) test_valid_p2.dart
+	./$(TARGET) test_valid.dart
 
 # Run on syntax-error test program
 test_error: $(TARGET)
 	@echo "====== Syntax-error program ======"
-	./$(TARGET) test_syntax_error_p2.dart; true
+	./$(TARGET) test_error.dart; true
 
 clean:
 	rm -f $(TARGET) lex.yy.c dart_parser.tab.c dart_parser.tab.h dart_parser.output
