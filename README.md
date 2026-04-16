@@ -28,7 +28,7 @@ On macOS, all three ship with Xcode Command Line Tools:
 xcode-select --install
 ```
 
-`bison` MUST be Version 3.x
+`bison` MUST be Version 3.8+
 
 ---
 
