@@ -1,3 +1,6 @@
 a.out
 lex.yy.c
-output*
+*output*
+*.tab.c
+*.tab.h
+notes.md
