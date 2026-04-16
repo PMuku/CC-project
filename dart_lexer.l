@@ -2,24 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "dart_parser.tab.h"
 
 int line = 1;
-
-/* Better token printer */
-void print_token(const char* type, const char* lexeme) {
-    printf("Line %-3d | %-15s | %s\n", line, type, lexeme);
-}
-
-void lexical_error(const char* message) {
-    printf("Lexical Error (line %d): %s\n", line, message);
-}
 %}
 
-/* ---------- Start Conditions ---------- */
+%option noinput nounput
+
 %x STRINGMODE
 %x COMMENTMODE
-
-/* ---------- Definitions ---------- */
 
 DIGIT       [0-9]
 LETTER      [a-zA-Z]
@@ -30,155 +21,81 @@ WHITESPACE  [ \t\r]+
 
 %%
 
-  /* ============================= */
-  /*          COMMENTS             */
-  /* ============================= */
+"//".*              { }
 
-  /* Single-line comment */
-"//".*              { /* ignore */ }
-
-  /* Multi-line comment start */
 "/*"                { BEGIN(COMMENTMODE); }
-
 <COMMENTMODE>"*/"   { BEGIN(INITIAL); }
-
 <COMMENTMODE>\n     { line++; }
-
 <COMMENTMODE><<EOF>> {
-                        lexical_error("Unclosed multi-line comment");
-                        exit(1);
-                    }
-
-<COMMENTMODE>.      { /* ignore comment content */ }
-
-  /* ============================= */
-  /*           STRINGS             */
-  /* ============================= */
+    fprintf(stderr, "Lexical Error (line %d): Unclosed multi-line comment\n", line);
+    exit(1);
+}
+<COMMENTMODE>.      { }
 
 \"                  { BEGIN(STRINGMODE); yymore(); }
-
 <STRINGMODE>\"      {
-                        yymore();
-                        print_token("STRING_LITERAL", yytext);
-                        BEGIN(INITIAL);
-                    }
-
-  /* Handle escape sequences */
-<STRINGMODE>\\[nrt\"\\]   { yymore(); }
-
-  /* Newline before closing quote = error */
+    yymore();
+    yylval.sval = strdup(yytext);
+    BEGIN(INITIAL);
+    return STRING_LITERAL;
+}
+<STRINGMODE>\\[nrt\"\\] { yymore(); }
 <STRINGMODE>\n      {
-                        lexical_error("Unclosed string literal");
-                        line++;
-                        BEGIN(INITIAL);
-                    }
-
-  /* EOF before closing quote */
+    fprintf(stderr, "Lexical Error (line %d): Unclosed string literal\n", line);
+    line++;
+    BEGIN(INITIAL);
+}
 <STRINGMODE><<EOF>> {
-                        lexical_error("Unclosed string at EOF");
-                        exit(1);
-                    }
-
+    fprintf(stderr, "Lexical Error (line %d): Unclosed string at EOF\n", line);
+    exit(1);
+}
 <STRINGMODE>.       { yymore(); }
 
-  /* ============================= */
-  /*           KEYWORDS            */
-  /* ============================= */
+"void"      { return VOID; }
+"main"      { return MAIN; }
+"int"       { return INT_TYPE; }
+"double"    { return DOUBLE_TYPE; }
+"bool"      { return BOOL_TYPE; }
+"String"    { return STRING_TYPE; }
+"var"       { return VAR; }
+"if"        { return IF; }
+"else"      { return ELSE; }
+"while"     { return WHILE; }
+"true"      { yylval.sval = strdup(yytext); return TRUE_LIT; }
+"false"     { yylval.sval = strdup(yytext); return FALSE_LIT; }
 
-"void"      { print_token("VOID", yytext); }
-"main"      { print_token("MAIN", yytext); }
-"int"       { print_token("INT_TYPE", yytext); }
-"double"    { print_token("DOUBLE_TYPE", yytext); }
-"bool"      { print_token("BOOL_TYPE", yytext); }
-"String"    { print_token("STRING_TYPE", yytext); }
-"var"       { print_token("VAR", yytext); }
+"||"        { return OR; }
+"&&"        { return AND; }
+"=="        { return EQ; }
+"!="        { return NEQ; }
+"<="        { return LE; }
+">="        { return GE; }
+"<"         { return LT; }
+">"         { return GT; }
+"+"         { return PLUS; }
+"-"         { return MINUS; }
+"*"         { return MUL; }
+"/"         { return DIV; }
+"="         { return ASSIGN; }
+"!"         { return NOT; }
+";"         { return SEMICOLON; }
+","         { return COMMA; }
+"("         { return LPAREN; }
+")"         { return RPAREN; }
+"{"         { return LBRACE; }
+"}"         { return RBRACE; }
 
-"if"        { print_token("IF", yytext); }
-"else"      { print_token("ELSE", yytext); }
-"while"     { print_token("WHILE", yytext); }
+{DOUBLE}    { yylval.sval = strdup(yytext); return NUM_DOUBLE; }
+{INT}       { yylval.sval = strdup(yytext); return NUM_INT; }
+{ID}        { yylval.sval = strdup(yytext); return ID; }
 
-"true"      { print_token("TRUE", yytext); }
-"false"     { print_token("FALSE", yytext); }
-
-  /* ============================= */
-  /*           OPERATORS           */
-  /* ============================= */
-
-"||"        { print_token("OR", yytext); }
-"&&"        { print_token("AND", yytext); }
-
-"=="        { print_token("EQ", yytext); }
-"!="        { print_token("NEQ", yytext); }
-
-"<="        { print_token("LE", yytext); }
-">="        { print_token("GE", yytext); }
-"<"         { print_token("LT", yytext); }
-">"         { print_token("GT", yytext); }
-
-"+"         { print_token("PLUS", yytext); }
-"-"         { print_token("MINUS", yytext); }
-"*"         { print_token("MUL", yytext); }
-"/"         { print_token("DIV", yytext); }
-
-"="         { print_token("ASSIGN", yytext); }
-"!"         { print_token("NOT", yytext); }
-
-  /* ============================= */
-  /*          DELIMITERS           */
-  /* ============================= */
-
-";"         { print_token("SEMICOLON", yytext); }
-","         { print_token("COMMA", yytext); }
-
-"("         { print_token("LPAREN", yytext); }
-")"         { print_token("RPAREN", yytext); }
-"{"         { print_token("LBRACE", yytext); }
-"}"         { print_token("RBRACE", yytext); }
-
-  /* ============================= */
-  /*            NUMBERS            */
-  /* ============================= */
-
-{DOUBLE}    { print_token("NUM_DOUBLE", yytext); }
-{INT}       { print_token("NUM_INT", yytext); }
-
-  /* ============================= */
-  /*         IDENTIFIERS           */
-  /* ============================= */
-
-{ID}        { print_token("ID", yytext); }
-
-  /* ============================= */
-  /*        WHITESPACE + LINES     */
-  /* ============================= */
-
-{WHITESPACE}    { /* ignore */ }
-
+{WHITESPACE}    { }
 \n              { line++; }
 
-  /* ============================= */
-  /*            ERRORS             */
-  /* ============================= */
-
 .           {
-                char msg[100];
-                snprintf(msg, sizeof(msg),
-                         "Unexpected character '%s'", yytext);
-                lexical_error(msg);
-            }
+    fprintf(stderr, "Lexical Error (line %d): Unexpected character '%s'\n", line, yytext);
+}
 
 %%
 
-int main(int argc, char **argv) {
-    if (argc > 1) {
-        FILE *file = fopen(argv[1], "r");
-        if (!file) {
-            perror("File open failed");
-            return 1;
-        }
-        yyin = file;
-    }
-
-    yylex();
-    return 0;
-}
+int yywrap(void) { return 1; }
