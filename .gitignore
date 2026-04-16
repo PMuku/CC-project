@@ -1,3 +1,5 @@
 a.out
 lex.yy.c
 output*
+*.tab.h
+*.tab.c

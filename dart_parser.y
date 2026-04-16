@@ -22,6 +22,7 @@
 extern int   line;
 extern FILE *yyin;
 
+
 /* --- SDD helper: newtemp() --- */
 static int temp_count = 0;
 static char *newtemp(void) {
@@ -72,6 +73,10 @@ int  yylex(void);
 %token PLUS MINUS
 %token MUL DIV
 %token ASSIGN NOT
+
+// these two are for better syntax error handling
+%define parse.error detailed
+%define parse.lac none
 
 /* Punctuation terminals */
 %token LPAREN RPAREN LBRACE RBRACE SEMICOLON COMMA
