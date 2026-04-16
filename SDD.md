@@ -142,11 +142,7 @@ Productions:
 
 ```
 <Expression> -> <Or>
-<<<<<<< HEAD
 <Or> -> <Or> ||| <And> | <And>
-=======
-<Or> -> <Or> || <And> | <And>
->>>>>>> 91d78467966736b6d6483b13f83630438708fd1c
 <And> -> <And> && <Equality> | <Equality>
 <Equality> -> <Equality> <EquOp> <Relational> | <Relational>
 <Relational> -> <Relational> <RelOp> <Additive> | <Additive>
@@ -323,11 +319,6 @@ Loop -> while ( Expression ) Block
                 Block.code |||
                 (goto L1) |||
                 (L2:)
-<<<<<<< HEAD
 ```
 
-=======
-
-```
->>>>>>> 91d78467966736b6d6483b13f83630438708fd1c
 ```
